@@ -8,102 +8,84 @@ use Illuminate\Support\Facades\Hash;
 
 class WriterRepository
 {
-    private Writer $client;
+    private Writer $writer;
 
-    public function __construct(Writer $client)
+    public function __construct(Writer $writer)
     {
-        $this->client = $client;
+        $this->writer = $writer;
     }
 
-    public function getClientForEmailAndDomains(string $email, string $domain): ?Writer
+    public function getClientForEmail(string $email): ?Writer
     {
-        $clientModel = $this->client::where('email', '=', strtolower($email))
-            ->where('domain', '=', $domain)
+        $writerModel = $this->writer::where('email', '=', strtolower($email))
             ->first();
 
-        if(($clientModel instanceof Writer)){
-            return $clientModel;
+        if(($writerModel instanceof Writer)){
+            return $writerModel;
         }
+
         return null;
     }
 
-    public function setPassword(Writer $client, string $password): void
+    public function getWriter(int $writerId): ?Writer
     {
-        $client->password = $password;
-        $client->save();
-    }
-
-    public function getClientWithPreferredAndBlockedWriters(int $clientId): ?Writer
-    {
-        $clientModel =  $this->client::select(
-            "id",
+        $writerModel = $this->writer::select(
+            "field_id",
             "firstname",
             "lastname",
-            "fullname",
+            "nickname",
             "email",
-            "timezone",
-            "phone_code",
             "phone",
-            "phone_verified",
             "address",
             "city",
             "zip",
-            "country",
-            "region",
-            "chk_email_marketing",
-            "chk_email_notifications",
-            "chk_sms_notifications",
-            "chk_calls",
-            "aff_paymethod",
-            "aff_paypal_email"
+            "country"
         )
-            ->with('preferred_writers')
-            ->with('blocked_writers')
             ->with('statistics')
-            ->where('id', $clientId)
+            ->where('field_id', $writerId)
             ->first();
 
-        if(($clientModel instanceof Writer)){
-            return $clientModel;
+        if(($writerModel instanceof Writer)){
+            return $writerModel;
         }
         return null;
     }
 
     public function getClientForPhoneCodeAndDomain(string $phoneCode, string $phone, string $domain): ?Writer
     {
-        $clientModel = $this->client::where([
+        $writerModel = $this->writer::where([
             'phone_code' => $phoneCode,
             'phone' => $phone,
             'domain' => $domain
         ])->first();
 
-        if(($clientModel instanceof Writer)){
-            return $clientModel;
+        if(($writerModel instanceof Writer)){
+            return $writerModel;
         }
         return null;
     }
 
     public function createClient(array $info)
     {
-        return $this->client::create($info);
+        return $this->writer::create($info);
     }
 
     public function findForId(int $id): ?Writer
     {
-        $clientModel = $this->client::find($id);
+        $writerModel = $this->writer::find($id);
 
-        if(($clientModel instanceof Writer)){
-            return $clientModel;
+        if(($writerModel instanceof Writer)){
+            return $writerModel;
         }
         return null;
     }
 
-    public function updateClient(Writer $client, array $paramsArray): bool
+    public function updateClient(Writer $writer, array $paramsArray): bool
     {
         foreach ($paramsArray as $name => $value) {
-            $client->$name = $value;
+            $writer->$name = $value;
         }
-        return $client->save();
+        return $writer->save();
     }
 
     public function updateResetHash(string $email, string $domain, string $passwordHash, string $resetHash)

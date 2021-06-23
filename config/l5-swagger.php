@@ -53,7 +53,7 @@ return [
             'middleware' => [
                 'api' => [],
                 'asset' => [],
-                'docs' => ['modal.secure'],
+                'docs' => [],//'modal.secure'
                 'oauth2_callback' => [],
             ],
 

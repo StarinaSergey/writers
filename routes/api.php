@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// CLIENT AUTH ROUTES
+Route::group([ 'prefix' => 'auth', 'middleware' => 'api', 'namespace' => 'Auth'], function(){
+
+    Route::post('/login', 'Login');
+//    Route::post('/logout', 'LogoutApi')->middleware('auth:api');
+//    Route::post('/refresh-token', 'RefreshToken')->middleware('auth:api');
+//    Route::post('/register', 'Register');
+//    Route::post('/register-simple', 'RegisterSimple');
+//
+//    Route::post('/send-reset-password-email', 'SendResetPasswordEmail');
+//    Route::post('/validate-reset-token', 'ValidateResetToken');
+//    Route::put('/set-new-password', 'SetNewPassword');
 });
